@@ -1,9 +1,6 @@
 from __future__ import division
 from pyModbusTCP.client import ModbusClient
 import logging
-import csv
-import time
-from datetime import datetime
 
 logging.basicConfig(level=logging.INFO)
 
@@ -37,27 +34,6 @@ class ModbusClass:
             _data.append(dataValue)  
         else:
             return _data
-        
-    def creatCsvFile(self):
-        now = datetime.now()
-        year = now.strftime("%Y")
-        month = now.strftime("%m")
-        day = now.strftime("%d")
-        time = now.strftime("%Hh%M")
-
-        self.fileName = "Fridge_Data_" + year + '.' + month + '.' + day + "_" + time + ".csv"
-        self.fileName = str(self.fileName)
-
-    #    with open(self.fileName ,'w',newline='') as newFile:
-    #        _myWriter = csv.writer(newFile)
-    #        _myWriter.writerow(['Battery Voltage','Internal Temperature','External Temperature'])
-
-    def saveData(self):
-    #    with open(self.fileName,'a',newline='') as _file:
-    #        _myWriter = csv.writer(_file)
-    #        _myWriter.writerow([self.voltage,self.internalTemp,self.externalTemp])
-        pass
-
 
     # Perform two's compliment on any given number just incase the number is negative
     def twosCompliment(self, _list, *args):

@@ -1,12 +1,13 @@
 from __future__ import division
 from pyModbusTCP.client import ModbusClient
 import logging
-import csv
 import time
-from datetime import datetime
 
 #Class for handling all the Modbus Connections
 import Modbus
+
+#Class for handling all the data storage related tasks
+import Data_Storage
 
 logging.basicConfig(level=logging.INFO)
 
@@ -50,7 +51,18 @@ if __name__ == '__main__':
     print("Fridge Data!")
     for _data in fridge_data:
         print(_data)
-        
+
+    # Create a list for data storage format
+    _data_to_save = [fridge_data[0],fridge_data[1],fridge_data[2],pyronometer_data[0]]
+
+    #Save the captured data
+    _file_name = "Fridge_Pyronometer_Data"
+    _headers = ['Battery Voltage (V)','Internal Temperature (^o C)','External Temperature (^o C)','Irradiance (W/m^2)']
+    
+    _data_store = Data_Storage.StorageClass()
+    _data_store.creatCsvFile(_file_name,_headers)
+    _data_store.saveData(_data_to_save)
+
     # endCounter = 0
     # while True:
     #     fridgeLogo.creatCsvFile()
