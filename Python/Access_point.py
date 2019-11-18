@@ -40,7 +40,7 @@ if __name__ == '__main__':
     fridge_offset = 0
     fridge_data = fridgeLogo.signalConditioning(fridge_gain, fridge_offset, fridge_data)
 
-    pyronometer_gain = 3.05
+    pyronometer_gain = 1
     pyronometer_offset = 0
     pyronometer_data = pyronometerLogo.signalConditioning(pyronometer_gain, pyronometer_offset, pyronometer_data)
 

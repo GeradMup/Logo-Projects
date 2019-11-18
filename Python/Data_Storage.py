@@ -6,6 +6,7 @@ class StorageClass:
 
     # Create the file for saving data. Each file is created with a time stamp of when it was created
     def creatCsvFile(self, _file_name, _headers):
+        # Obtain the current date and time
         now = datetime.now()
         year = now.strftime("%Y")
         month = now.strftime("%m")
