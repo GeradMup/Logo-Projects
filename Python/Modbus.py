@@ -26,39 +26,17 @@ class ModbusClass:
         
         except AttributeError:
             print('Failed to connect to Logo')
-
-    #Read data from the LOGO I/O pins
-    def _readData(self):
-        self.voltage = self._client.read_holding_registers(0)            # Reading voltage on AI3
-        self.voltage = self.voltage[0]
-        self.voltage = int(self.voltage)        # Convert string to an integer
-
-        self.internalTemp = self._client.read_holding_registers(1)      # Reading upper temperature on AI6
-        self.internalTemp = self.internalTemp[0]
-        self.internalTemp = int(self.internalTemp)
-
-        self.externalTemp = self._client.read_holding_registers(2)       # Reading ambient temperature on AI5
-        self.externalTemp = self.externalTemp[0]
-        self.externalTemp = int(self.externalTemp)
-
-        # Perform two's compliment on the 16 Bit number because it is a negative value
-        self.voltage = self.twosCompliment(self.voltage)
-        self.internalTemp = self.twosCompliment(self.internalTemp)
-        self.externalTemp = self.twosCompliment(self.externalTemp)
-
-        # Devide by 10 --> Correct representation of the values
-        self.voltage = self.voltage/10
-        self.externalTemp = self.externalTemp/10
-        self.internalTemp = self.internalTemp/10
-        
-        print("Voltage: ",self.voltage)
-        print("Internal Temperature: ", self.internalTemp)
-        print("External Temperature: ", self.externalTemp)
     
     # Generic Function for reading from any LOGO 
     def _readData(self, _list = [], *args):
+        _data = []
         for regNumber in _list:
-            print(regNumber)
+            dataValue = self._client.read_holding_registers(regNumber)            # Reading voltage on AI3
+            dataValue = dataValue[0]
+            dataValue = int(dataValue)
+            _data.append(dataValue)  
+        else:
+            return _data
         
     def creatCsvFile(self):
         now = datetime.now()
@@ -79,13 +57,31 @@ class ModbusClass:
     #        _myWriter = csv.writer(_file)
     #        _myWriter.writerow([self.voltage,self.internalTemp,self.externalTemp])
         pass
+
+
     # Perform two's compliment on any given number just incase the number is negative
-    def twosCompliment(self,number):
-        if number > 256:
-            number = number - 65536
+    def twosCompliment(self, _list, *args):
+        _result_list = []
+        for number in _list:
+            # All values are expected to be below 8 Bits. If More than 8 Bits, number is negative
+            if number > 256:
+                number = number - 65536
+                _result_list.append(number)
+            else:
+                number = number
+                _result_list.append(number)
         else:
-            number = number
-        return number
+            return _result_list
+
+    # Convert the electrical signals into meaningful data
+    def signalConditioning(self,_gain, _offset, _signals = [], *args):
+        _result_list = []
+        for _signal in _signals:
+            _conditioned_signal = (_signal*_gain + _offset)/10
+            _result_list.append(_conditioned_signal)
+        else:
+            return _result_list
+
 
     def disconnect(self):
         pass
@@ -101,13 +97,34 @@ if __name__ == '__main__':
     pyronometerLogo = ModbusClass()
     pyronometerLogo._connectToLogo("146.141.117.20",502)
 
+    # Read Data From the Fridge LOGO
     fridge_register_numbers = [0,1,2]
-    fridgeLogo._readData(fridge_register_numbers)       # Read Data From the Fridge LOGO
-    
+    fridge_data = fridgeLogo._readData(fridge_register_numbers)       
 
+    # Read Data From Pyronometer LOGO
     pyronometer_register_numbers = [0]
-    pyronometerLogo._readData(pyronometer_register_numbers)
+    pyronometer_data = pyronometerLogo._readData(pyronometer_register_numbers) 
     
+    # First Check for negative numbers using twos compliments. All pyronometer data is positive
+    fridge_data = fridgeLogo.twosCompliment(fridge_data)
+
+    # Do the necessary signal condition
+    fridge_gain = 1
+    fridge_offset = 0
+    fridge_data = fridgeLogo.signalConditioning(fridge_gain, fridge_offset, fridge_data)
+
+    pyronometer_gain = 3.05
+    pyronometer_offset = 0
+    pyronometer_data = pyronometerLogo.signalConditioning(pyronometer_gain, pyronometer_offset, pyronometer_data)
+
+    print("Pyronometer!")
+    for _data in pyronometer_data:
+        print(_data)
+
+    print("Fridge Data!")
+    for _data in fridge_data:
+        print(_data)
+        
     # endCounter = 0
     # while True:
     #     fridgeLogo.creatCsvFile()
