@@ -12,7 +12,7 @@ class StorageClass:
         day = now.strftime("%d")
         time = now.strftime("%Hh%M")
 
-        self.fileName = _file_name + year + '.' + month + '.' + day + "_" + time + ".csv"
+        self.fileName = "Captured Data/"+_file_name + year + '.' + month + '.' + day + "_" + time + ".csv"
         self.fileName = str(self.fileName)
 
         with open(self.fileName ,'w',newline='') as newFile:
