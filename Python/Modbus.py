@@ -54,7 +54,12 @@ class ModbusClass:
         print("Voltage: ",self.voltage)
         print("Internal Temperature: ", self.internalTemp)
         print("External Temperature: ", self.externalTemp)
-
+    
+    # Generic Function for reading from any LOGO 
+    def _readData(self, _list = [], *args):
+        for regNumber in _list:
+            print(regNumber)
+        
     def creatCsvFile(self):
         now = datetime.now()
         year = now.strftime("%Y")
@@ -65,15 +70,15 @@ class ModbusClass:
         self.fileName = "Fridge_Data_" + year + '.' + month + '.' + day + "_" + time + ".csv"
         self.fileName = str(self.fileName)
 
-        with open(self.fileName ,'w',newline='') as newFile:
-            _myWriter = csv.writer(newFile)
-            _myWriter.writerow(['Battery Voltage','Internal Temperature','External Temperature'])
+    #    with open(self.fileName ,'w',newline='') as newFile:
+    #        _myWriter = csv.writer(newFile)
+    #        _myWriter.writerow(['Battery Voltage','Internal Temperature','External Temperature'])
 
     def saveData(self):
-        with open(self.fileName,'a',newline='') as _file:
-            _myWriter = csv.writer(_file)
-            _myWriter.writerow([self.voltage,self.internalTemp,self.externalTemp])
-
+    #    with open(self.fileName,'a',newline='') as _file:
+    #        _myWriter = csv.writer(_file)
+    #        _myWriter.writerow([self.voltage,self.internalTemp,self.externalTemp])
+        pass
     # Perform two's compliment on any given number just incase the number is negative
     def twosCompliment(self,number):
         if number > 256:
@@ -87,21 +92,34 @@ class ModbusClass:
 
 # Get the program started here
 if __name__ == '__main__':
+    
+    #Establish a connection to the fridge Logo 
     fridgeLogo = ModbusClass()
     fridgeLogo._connectToLogo("192.168.0.123",503)
 
-    endCounter = 0
-    while True:
-        fridgeLogo.creatCsvFile()
-        counter = 0
-        while True:
-            fridgeLogo._readData()
-            fridgeLogo.saveData()
-            time.sleep(5)
-            counter += 1
-            if counter == 10:
-                break
+    #Establish a connection to the Pyronometer Logo
+    pyronometerLogo = ModbusClass()
+    pyronometerLogo._connectToLogo("146.141.117.20",502)
 
-        endCounter += 1
-        if endCounter == 5:
-            break
+    fridge_register_numbers = [0,1,2]
+    fridgeLogo._readData(fridge_register_numbers)       # Read Data From the Fridge LOGO
+    
+
+    pyronometer_register_numbers = [0]
+    pyronometerLogo._readData(pyronometer_register_numbers)
+    
+    # endCounter = 0
+    # while True:
+    #     fridgeLogo.creatCsvFile()
+    #     counter = 0
+    #     while True:
+    #         fridgeLogo._readData()
+    #         fridgeLogo.saveData()
+    #         time.sleep(5)
+    #         counter += 1
+    #         if counter == 10:
+    #             break
+
+    #     endCounter += 1
+    #     if endCounter == 5:
+    #         break
