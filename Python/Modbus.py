@@ -15,7 +15,6 @@ class ModbusClass:
     #Connect to the LOGO
     def _connectToLogo(self,ip_address,port_num):
         try:
-            print('Trying to make a connection')
             self._client.host(ip_address)
             self._client.port(port_num)
             self._client.open()
@@ -53,7 +52,8 @@ class ModbusClass:
     def signalConditioning(self,_gain, _offset, _signals = [], *args):
         _result_list = []
         for _signal in _signals:
-            _conditioned_signal = (_signal*_gain + _offset)/10
+            _conditioned_signal = (_signal*_gain + _offset)
+            _conditioned_signal = round(_conditioned_signal, 2) 
             _result_list.append(_conditioned_signal)
         else:
             return _result_list

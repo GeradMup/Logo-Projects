@@ -18,8 +18,8 @@ if __name__ == '__main__':
     
     #Establish a connection to the fridge Logo 
     fridgeLogo = Modbus.ModbusClass()
-    fridge_ip = "146.141.117.21"
-    fridge_port = 502
+    fridge_ip = "146.141.117.40"
+    fridge_port = 503
     fridgeLogo._connectToLogo(fridge_ip, fridge_port)
 
     #Establish a connection to the Pyronometer Logo
@@ -40,7 +40,7 @@ if __name__ == '__main__':
     fridge_data = fridgeLogo.twosCompliment(fridge_data)
 
     # Do the necessary signal condition
-    fridge_gain = 1
+    fridge_gain = 0.1
     fridge_offset = 0
     fridge_data = fridgeLogo.signalConditioning(fridge_gain, fridge_offset, fridge_data)
 
