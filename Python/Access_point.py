@@ -18,11 +18,15 @@ if __name__ == '__main__':
     
     #Establish a connection to the fridge Logo 
     fridgeLogo = Modbus.ModbusClass()
-    fridgeLogo._connectToLogo("192.168.0.123",503)
+    fridge_ip = "146.141.117.21"
+    fridge_port = 502
+    fridgeLogo._connectToLogo(fridge_ip, fridge_port)
 
     #Establish a connection to the Pyronometer Logo
     pyronometerLogo = Modbus.ModbusClass()
-    pyronometerLogo._connectToLogo("146.141.117.20",502)
+    pyronometer_ip = "146.141.117.20"
+    pyronometer_port = 502
+    pyronometerLogo._connectToLogo(pyronometer_ip, pyronometer_port)
 
     # Read Data From the Fridge LOGO
     fridge_register_numbers = [0,1,2]
